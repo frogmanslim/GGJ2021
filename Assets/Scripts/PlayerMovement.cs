@@ -4,37 +4,46 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public float moveSpeed = 1f;
+    [SerializeField]
+    public Transform movePoint;
+    [SerializeField]
+    public LayerMask whatStopsMovement;
+
+    private void Start()
+    {
+        movePoint.parent = null;
+    }
+
+    float t;
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W)){
-            MoveUp();
-        }
-        if (Input.GetKeyDown(KeyCode.S)){
-            MoveDown();
-        }
-        if (Input.GetKeyDown(KeyCode.A)){
-            MoveLeft();
-        }
-        if (Input.GetKeyDown(KeyCode.D)){
-            MoveRight();
-        }
-    }
+        t += Time.deltaTime;
+        //transform.position = Easing.EaseVecTwo(Easing.Equation.BackEaseIn, t, transform.position, movePoint.position, 1);
+        transform.position = Vector3.Slerp(transform.position, movePoint.position, 0.5f);
 
-    void MoveUp()
-    {
-        transform.localPosition += new Vector3(0,1,0);
-    }
-    void MoveDown()
-    {
-        transform.localPosition += new Vector3(0,-1,0);
-    }
-    void MoveLeft()
-    {
-        transform.localPosition += new Vector3(-1,0,0);
-    }
-    void MoveRight()
-    {
-        transform.localPosition += new Vector3(1,0,0);
-    }
+        if (Vector3.Distance(transform.position, movePoint.position) == 0f)
+        {
 
+            float xAxe = Input.GetAxisRaw("Horizontal");
+            float yAxe = Input.GetAxisRaw("Vertical");
+
+            if (Mathf.Abs(xAxe) == 1f)
+            {
+                if (!Physics2D.OverlapBox(movePoint.position + new Vector3(xAxe, 0, 0), new Vector2(0.5f,0.5f), whatStopsMovement))
+                {
+                    movePoint.position += new Vector3(xAxe, 0, 0);
+                    t = 0;
+                }
+            }
+            if (Mathf.Abs(yAxe) == 1f)
+            {
+                if (!Physics2D.OverlapBox(movePoint.position + new Vector3(0, yAxe, 0), new Vector2(0.5f, 0.5f), whatStopsMovement))
+                {
+                    movePoint.position += new Vector3(0, yAxe, 0);
+                    t = 0;
+                }
+            }
+        }
+    }
 }
