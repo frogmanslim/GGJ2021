@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
                     t = 0;
                 }
             }
-            if (Mathf.Abs(yAxe) == 1f)
+            else if (Mathf.Abs(yAxe) == 1f)
             {
                 if (!Physics2D.OverlapBox(movePoint.position + new Vector3(0, yAxe, 0), new Vector2(0.5f, 0.5f), whatStopsMovement))
                 {
